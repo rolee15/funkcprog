@@ -1,4 +1,6 @@
--- Konzultacio: Csüt 16-17:30, 0-411
+-- Konzultacio: Csüt 16-17:30, 0-411, online: 
+
+import Data.List
 
 -- FP meme: https://9gag.com/gag/az2vv1N
 
@@ -43,17 +45,19 @@ floats2 = [1.1, 1.3 .. 2.19]
 
 -- Add meg egy lista paros elemeinek duplajat!
 doubleEvens :: [Int] -> [Int]
-doubleEvens xs = undefined
+doubleEvens xs = [2 * x | x <- xs, even x]
 
 -- Mit kene atirni, hogyha nem szeretnenk a paratlanokat kiszurni?
+doubleEvens' :: [Int] -> [Int]
+doubleEvens' xs = [if even x then 2 * x else x | x <- xs]
 
 -- Hany darab paratlan eleme van egy listanak?
 odds :: [Int] -> Int
-odds = undefined
+odds xs = length [1 | x <- xs, odd x]
 
 -- add meg az osszes ora-perc part!
 clock :: [(Int, Int)]
-clock = undefined
+clock = [(x, y) | x <- [0..23], y <- [0..59]]
 
 -- Sorold fel az összes prímszámot!
 primes :: [Integer]
