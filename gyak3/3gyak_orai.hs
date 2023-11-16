@@ -64,8 +64,7 @@ xor :: Bool -> Bool -> Bool
 xor x y = x /= y   -- Bool-ra van == és /= a Prelude-ban
 
 or' :: Bool -> Bool -> Bool
-or' False False = False
-or' _     _     = True
+or' = undefined
 
 -- osszeadas kettes szamrendszerben 2 biten:
 add2 :: (Int, Int) -> (Int, Int) -> (Int, Int)

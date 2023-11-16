@@ -1,8 +1,12 @@
--- Konzultacio: Csüt 16-17:30, 0-411, online: 
-
+-- Konzultáció: Csüt 16-17:30, 00-411, online: 2ohfydw
 import Data.List
 
+
+x = x + 1
+
 -- FP meme: https://9gag.com/gag/az2vv1N
+
+
 
 -- Hoogle tipusokkal
 
@@ -44,11 +48,11 @@ floats2 = [1.1, 1.3 .. 2.19]
 -----------------------
 
 -- Add meg egy lista paros elemeinek duplajat!
+-- { x | x % 2 = 0, x `elem` xs}
 doubleEvens :: [Int] -> [Int]
 doubleEvens xs = [2 * x | x <- xs, even x]
 
 -- Mit kene atirni, hogyha nem szeretnenk a paratlanokat kiszurni?
-doubleEvens' :: [Int] -> [Int]
 doubleEvens' xs = [if even x then 2 * x else x | x <- xs]
 
 -- Hany darab paratlan eleme van egy listanak?
