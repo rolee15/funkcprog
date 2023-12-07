@@ -1,6 +1,8 @@
 import Data.Char
 import Data.List
 import Numeric
+import Distribution.Compat.Lens (_1)
+import Control.Exception (evaluate)
 
 unsafeLookup :: (Eq a) => a -> [(a, b)] -> b
 unsafeLookup k [] = error "unsafeLookup: Key not found"
@@ -59,3 +61,47 @@ precedence "/" = 2
 precedence "*" = 2
 precedence "%" = 2
 precedence "~" = 3
+
+
+isOperatorString :: String -> Bool
+isOperatorString xs = length xs == 1 && isOperator (head xs)
+
+shuntStep ::[Token] -> Token -> ([Token], [Token])
+shuntStep stack token
+  | token == "(" = (token : stack, [])
+  | token == ")" = let (tokens, newStack) = break (== "(") stack in (drop 1 newStack, tokens)
+  | isOperatorString token && (null stack || head stack == "(" || precedence token > precedence (head stack)) = (token : stack, [])
+  | isOperatorString token = let (tokens, newStack) = span (\x -> x =="(" && precedence token <= precedence x) stack in (token : newStack, tokens)
+  | otherwise = (stack, [token])
+
+shunt :: [Token] -> [Token] -> [Token]
+shunt stack [] = stack
+shunt stack (x : xs) = let (newStack, tokens) = shuntStep stack x in tokens ++ shunt newStack xs
+
+
+unaryToOp :: Token -> (Integer -> Integer)
+unaryToOp "~" = negate
+
+binaryToOp :: Token -> (Integer -> Integer -> Integer)
+binaryToOp "+" = (+)
+binaryToOp "-" = (-)
+binaryToOp "*" = (*)
+binaryToOp "/" = div
+binaryToOp "%" = mod
+
+calculateStep :: [Integer] -> Token -> [Integer]
+calculateStep stack token
+  | token == "~"           = case stack of
+                              (x:xs) -> unaryToOp "~" x : xs
+                              _ -> error "calculateStep: not enough parameters when applying ~"
+  | isOperatorString token = case stack of
+                              (x:y:xs) -> binaryToOp token y x : xs
+                              _ -> error ("calculateStep: not enough parameters when applying " ++ token)
+  | otherwise              = parseLiteral token : stack
+
+calculate :: [Integer] -> [Token] -> Integer
+calculate stack [] = head stack
+calculate stack (x:xs) = calculate (calculateStep stack x) xs
+
+evaluateExpression :: String -> Integer
+evaluateExpression = calculate [] . shunt [] . tokenize
